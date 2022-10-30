@@ -4,7 +4,7 @@ declare global {
       NOTION_TOKEN: string;
       CORS_ORIGIN: string;
       PORT: string;
-      DATABASE_ID: string;
+      DATABASE_ID_CLONE: string;
     }
   }
 }
