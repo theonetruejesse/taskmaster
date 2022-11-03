@@ -1,7 +1,7 @@
 {
-  "name": "notion-sdk-project",
+  "name": "taskmaster",
   "version": "1.0.0",
-  "description": "This is a template repository for getting started with the [Notion SDK](https://github.com/makenotion/notion-sdk-js) and [TypeScript](https://www.typescriptlang.org/).",
+  "description": "Automations for personal notion database",
   "main": "dist/index.js",
   "private": true,
   "scripts": {
