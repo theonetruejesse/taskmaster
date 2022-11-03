@@ -1,13 +1,6 @@
 import cors from "cors";
-import express, { response } from "express";
-import { notion } from "./constants";
-import {
-  getUpdatedCloneState,
-  getActiveClones,
-  updateClone,
-} from "./queries/clone";
-import { isFullPage } from "@notionhq/client";
-import { addToMM, getMMPage, getUpdatedMMState } from "./queries/mastermind";
+import express from "express";
+import { cloneMM } from "./programs/cloneMM";
 
 async function main() {
   const app = express();
@@ -20,23 +13,7 @@ async function main() {
   );
 
   app.get("/clone", async (req, res) => {
-    const response = await getActiveClones();
-
-    for (const page of response.results) {
-      if (isFullPage(page)) {
-        const cloneState = getUpdatedCloneState(page);
-        // updateClone(cloneState);
-        if (!cloneState.GenesisId) throw "no genesis id found";
-
-        if (cloneState.Active) {
-          const genesis = await getMMPage(cloneState.GenesisId);
-          if (!isFullPage(genesis)) throw "genesis is not a full page";
-          const mmState = getUpdatedMMState(genesis, cloneState);
-          addToMM(mmState);
-        }
-      }
-    }
-    res.send(response);
+    res.send(await cloneMM());
   });
 
   app.listen(parseInt(process.env.PORT), () => {
