@@ -1,12 +1,15 @@
 import { PageObjectResponse } from "@notionhq/client/build/src/api-endpoints";
 import { notion } from "../constants";
+import { DateRange } from "../utils/dates";
 
 export interface CloneState {
   Active: boolean;
   Streak: number;
   State: number;
   PageId: string;
+  DayNames: DateRange;
   GenesisId: string | null;
+  // Repeat: string
 }
 
 export const getUpdatedCloneState = (page: PageObjectResponse): CloneState => {
@@ -30,17 +33,31 @@ export const getUpdatedCloneState = (page: PageObjectResponse): CloneState => {
       props.Genesis.relation.length == 1 ? props.Genesis.relation[0].id : null;
   }
 
+  let start: string = "";
+  if (props.Start.type == "select") {
+    if (!props.Start.select) throw "no starting day selected";
+    start = props.Start.select!.name;
+  }
+
+  let end: string | undefined = "";
+  if (props.End.type == "select") {
+    end = props.End.select?.name;
+  }
+
   return {
     Active: isActive,
     State: state + 1,
     Streak: streak + 1, // need biz logic
     PageId: page.id,
+    DayNames: {
+      Start: start,
+      End: end ? end : null,
+    },
     GenesisId: genesisId,
   };
 };
 
 export const getActiveClones = async () => {
-  console.log(process.env.NOTION_TOKEN);
   const response = await notion.databases.query({
     database_id: process.env.DATABASE_ID_CLONE,
     filter: {
@@ -52,14 +69,6 @@ export const getActiveClones = async () => {
   });
   return response;
 };
-
-// enum DayOfWeek {
-//   Monday = "monday",
-//   Monday = "monday",
-//   Monday = "monday",
-//   kDouble,
-//   kInt,
-// }
 
 export const updateClone = async (newState: CloneState) => {
   const response = await notion.pages

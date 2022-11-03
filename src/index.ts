@@ -6,15 +6,12 @@ import {
   getActiveClones,
   updateClone,
 } from "./queries/clone";
-import "dotenv-safe/config";
 import { isFullPage } from "@notionhq/client";
-import { PageObjectResponse } from "@notionhq/client/build/src/api-endpoints";
-import { getMMPage } from "./queries/mastermind";
+import { addToMM, getMMPage, getUpdatedMMState } from "./queries/mastermind";
 
 async function main() {
   const app = express();
   app.set("proxy", 1);
-
   app.use(
     cors({
       origin: process.env.CORS_ORIGIN,
@@ -31,13 +28,14 @@ async function main() {
         // updateClone(cloneState);
         if (!cloneState.GenesisId) throw "no genesis id found";
 
-        const genesis = await getMMPage(cloneState.GenesisId);
-        if (!isFullPage(genesis)) throw "genesis is not a full page";
-        // const mmState = getUpdatedMMState(genesis, cloneState);
-        // addToMM(mmState);
+        if (cloneState.Active) {
+          const genesis = await getMMPage(cloneState.GenesisId);
+          if (!isFullPage(genesis)) throw "genesis is not a full page";
+          const mmState = getUpdatedMMState(genesis, cloneState);
+          addToMM(mmState);
+        }
       }
     }
-    console.log(process.env.NOTION_TOKEN);
     res.send(response);
   });
 

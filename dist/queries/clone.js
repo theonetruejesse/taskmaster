@@ -12,6 +12,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.updateClone = exports.getActiveClones = exports.getUpdatedCloneState = void 0;
 const constants_1 = require("../constants");
 const getUpdatedCloneState = (page) => {
+    var _a;
     const props = page.properties;
     const isActive = props.Active.type == "checkbox" && props.Active.checkbox;
     let state = -1;
@@ -28,17 +29,30 @@ const getUpdatedCloneState = (page) => {
         genesisId =
             props.Genesis.relation.length == 1 ? props.Genesis.relation[0].id : null;
     }
+    let start = "";
+    if (props.Start.type == "select") {
+        if (!props.Start.select)
+            throw "no starting day selected";
+        start = props.Start.select.name;
+    }
+    let end = "";
+    if (props.End.type == "select") {
+        end = (_a = props.End.select) === null || _a === void 0 ? void 0 : _a.name;
+    }
     return {
         Active: isActive,
         State: state + 1,
         Streak: streak + 1,
         PageId: page.id,
+        DayNames: {
+            Start: start,
+            End: end ? end : null,
+        },
         GenesisId: genesisId,
     };
 };
 exports.getUpdatedCloneState = getUpdatedCloneState;
 const getActiveClones = () => __awaiter(void 0, void 0, void 0, function* () {
-    console.log(process.env.NOTION_TOKEN);
     const response = yield constants_1.notion.databases.query({
         database_id: process.env.DATABASE_ID_CLONE,
         filter: {
@@ -51,13 +65,6 @@ const getActiveClones = () => __awaiter(void 0, void 0, void 0, function* () {
     return response;
 });
 exports.getActiveClones = getActiveClones;
-// enum DayOfWeek {
-//   Monday = "monday",
-//   Monday = "monday",
-//   Monday = "monday",
-//   kDouble,
-//   kInt,
-// }
 const updateClone = (newState) => __awaiter(void 0, void 0, void 0, function* () {
     const response = yield constants_1.notion.pages
         .update({

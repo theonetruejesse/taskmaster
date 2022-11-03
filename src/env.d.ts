@@ -5,8 +5,9 @@ declare global {
       CORS_ORIGIN: string;
       PORT: string;
       DATABASE_ID_CLONE: string;
+      DATABASE_ID_MM: string;
     }
   }
 }
 
-export {};
+export {}

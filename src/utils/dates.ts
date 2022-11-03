@@ -1,3 +1,8 @@
+export interface DateRange {
+  Start: string;
+  End: string | null;
+}
+
 // get and format date range
 // getRange(-1,1) => yesterday, tomorrow
 // date may not be in sync, depending on time-zone
@@ -21,24 +26,6 @@ export const dateToValue = (givenDate: string) => {
   return Math.ceil((given.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
 };
 
-// based on Notion db properties
-export const repeatToDate = (type: string) => {
-  switch (type) {
-    case "Daily":
-      return 1;
-    case "EO-Day":
-      return 2;
-    case "Weekly":
-      return 7;
-    case "EO-Week":
-      return 14;
-    case "Monthly":
-      return 30; // technically incorrect, todo -> create helper function
-    default:
-      return 0;
-  }
-};
-
 export const getNextWeek = () => {
   const nextSunday = getNextSunday(new Date());
 
@@ -53,6 +40,19 @@ export const getNextWeek = () => {
     Thursday: weekString(4),
     Friday: weekString(5),
     Saturday: weekString(6),
+  };
+};
+
+export const getNewDays = (weekDays: any, dayNames: DateRange): DateRange => {
+  const start = weekDays[dayNames.Start];
+  if (!start) throw "Starting date issue";
+
+  let end = dayNames.End ? weekDays[dayNames.End] : null;
+  if (end && start > end) end = getDayWeekLater(end);
+
+  return {
+    Start: start,
+    End: end,
   };
 };
 

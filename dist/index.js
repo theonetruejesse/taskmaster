@@ -15,7 +15,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const cors_1 = __importDefault(require("cors"));
 const express_1 = __importDefault(require("express"));
 const clone_1 = require("./queries/clone");
-require("dotenv-safe/config");
 const client_1 = require("@notionhq/client");
 const mastermind_1 = require("./queries/mastermind");
 function main() {
@@ -34,14 +33,15 @@ function main() {
                     // updateClone(cloneState);
                     if (!cloneState.GenesisId)
                         throw "no genesis id found";
-                    const genesis = yield (0, mastermind_1.getMMPage)(cloneState.GenesisId);
-                    if (!(0, client_1.isFullPage)(genesis))
-                        throw "genesis is not a full page";
-                    // const mmState = getUpdatedMMState(genesis, cloneState);
-                    // addToMM(mmState);
+                    if (cloneState.Active) {
+                        const genesis = yield (0, mastermind_1.getMMPage)(cloneState.GenesisId);
+                        if (!(0, client_1.isFullPage)(genesis))
+                            throw "genesis is not a full page";
+                        const mmState = (0, mastermind_1.getUpdatedMMState)(genesis, cloneState);
+                        (0, mastermind_1.addToMM)(mmState);
+                    }
                 }
             }
-            console.log(process.env.NOTION_TOKEN);
             res.send(response);
         }));
         app.listen(parseInt(process.env.PORT), () => {
