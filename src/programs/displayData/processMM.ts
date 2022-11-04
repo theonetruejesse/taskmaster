@@ -65,9 +65,9 @@ export const processData = async () => {
   const response = await getAllMM();
 
   // {Sunday: [], Monday: [], ... /Saturday: []}
-  const startingState = Object.keys(DayNames).reduce((days: any, d: string) => {
+  const startingState = Object.keys(DayNames).reduce((days: any, d: any) => {
     const addDay: any = {};
-    addDay[d] = [];
+    if (isNaN(d)) addDay[d] = [];
     return { ...days, ...addDay };
   }, {});
 
@@ -91,7 +91,7 @@ export const processData = async () => {
   return {
     IteratorKeys: {
       dateRanges: ikDateRanges,
-      dayNames: Object.keys(DayNames), // ["Sunday", "Monday", ... , "Saturday"]
+      dayNames: Object.keys(DayNames).filter((k: any) => isNaN(k)), // ["Sunday", "Monday", ... , "Saturday"]
     },
     Map: dataMap,
   };

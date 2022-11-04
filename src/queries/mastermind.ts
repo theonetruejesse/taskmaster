@@ -36,6 +36,7 @@ export const addToMM = async (mmState: MastermindState) => {
 };
 
 export const getAllMM = async () => {
+  // todo -> pagation required
   const response = await notion.databases
     .query({
       database_id: process.env.DATABASE_ID_MM,

@@ -35,8 +35,8 @@ export const getMasterMindState = (
   if (props.Date.type != "date" || !props.Date.date) throw "no date given";
 
   let status: string | undefined = undefined;
-  if (props.End.type == "status") {
-    status = props.End.status?.name;
+  if (props.Status.type == "status") {
+    status = props.Status.status?.name;
   }
   if (!status) throw "no status selected";
 

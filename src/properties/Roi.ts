@@ -1,5 +1,3 @@
-import { enumContains } from "../utils/enum";
-
 export enum Roi {
   Low = 1,
   Okay,
@@ -11,12 +9,15 @@ export enum Roi {
 // lazy man's functions
 // would've been wayy better if I used a type instead of enum
 
+// todo -> change from hard code to Object.value() magic
 export const getRoiValue = (roiName: string) => {
   switch (roiName) {
     case "Low":
       return Roi.Low;
     case "Okay":
       return Roi.Okay;
+    case "Good":
+      return Roi.Good;
     case "Great":
       return Roi.Great;
     case "Crucial":
@@ -35,10 +36,12 @@ export const getRoiName = (roiValue: number) => {
     case 2:
       return "Okay";
     case 3:
-      return "Great";
+      return "Good";
     case 4:
-      return "Crucial";
+      return "Great";
     case 5:
+      return "Crucial";
+    case 6:
       return "Mandatory";
     default:
       throw "Invalid roi value";

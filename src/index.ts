@@ -2,6 +2,7 @@ import cors from "cors";
 import express from "express";
 import { week } from "./constants";
 import { cloneMM } from "./programs/cloneMM";
+import { processData } from "./programs/displayData/processMM";
 
 async function main() {
   const app = express();
@@ -19,7 +20,7 @@ async function main() {
   });
 
   app.get("/data", async (req, res) => {
-    res.send("cool data bro");
+    res.send(await processData());
   });
 
   app.listen(parseInt(process.env.PORT), () => {
