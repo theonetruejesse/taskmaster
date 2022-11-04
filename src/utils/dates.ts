@@ -1,6 +1,18 @@
+import { getEnumKeyByValue } from "./enum";
+
 export interface DateRange {
   Start: string;
   End: string | null;
+}
+
+export enum DayNames {
+  Sunday = 0,
+  Monday,
+  Tuesday,
+  Wednesday,
+  Thursday,
+  Friday,
+  Saturday,
 }
 
 export const dateRangeToKeyString = (dr: DateRange) => {
@@ -38,8 +50,9 @@ export const getNextWeek = () => {
     valueToDate(dateToValue(nextSunday) + value);
 
   return {
+    // todo -> refractor to use DayNames enum instead
     Sunday: nextSunday,
-    DayNames: weekString(1),
+    Monday: weekString(1),
     Tuesday: weekString(2),
     Wednesday: weekString(3),
     Thursday: weekString(4),
@@ -78,3 +91,39 @@ export const getDateRange = (start: string, end: string | null): DateRange => ({
   Start: start,
   End: end,
 });
+
+export const createDateList = (dateRange: DateRange): string[] => {
+  if (!dateRange.End) return [dateRange.Start];
+  const dateList = [];
+  let datePointer = dateRange.Start;
+  if (dateRange.Start > dateRange.End) throw "start/end date error";
+  while (datePointer < dateRange.End) {
+    dateList.push(datePointer);
+    const dateValue = dateToValue(datePointer);
+    datePointer = valueToDate(dateValue + 1);
+  }
+  dateList.push(dateRange.End);
+  return dateList;
+};
+
+export const getDayOfWeek = (day: string) => {
+  const dt = new Date(day);
+  return getEnumKeyByValue(DayNames, dt.getDay());
+};
+
+// ex: 11/1/22 -> Tuesday
+// dt.getDay() = 2
+// startShift = -2, endShift = 4
+// get date string based on shift
+export const getThatWeek = (day: string): DateRange => {
+  const dt = new Date(day);
+  const weekdayValue = dt.getDay();
+  const startShift = DayNames.Sunday - weekdayValue;
+  const endShift = DayNames.Saturday - weekdayValue;
+
+  const relativeDayValue = dateToValue(day);
+  return {
+    Start: valueToDate(relativeDayValue + startShift),
+    End: valueToDate(relativeDayValue + endShift),
+  };
+};
