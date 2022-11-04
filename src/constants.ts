@@ -8,4 +8,13 @@ export const notion = new Client({
 
 export const week = getNextWeek();
 
-console.log(week);
+// ik -> iterator keys
+export const ikDayNames = [
+  "Monday",
+  "Tuesday",
+  "Wednesday",
+  "Thursday",
+  "Friday",
+  "Saturday",
+  "Sunday",
+];

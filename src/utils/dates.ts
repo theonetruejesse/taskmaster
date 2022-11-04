@@ -3,6 +3,11 @@ export interface DateRange {
   End: string | null;
 }
 
+export const dateRangeToKeyString = (dr: DateRange) => {
+  if (!dr.End) throw "date range has no ending";
+  return `${dr.Start},${dr.End!}`;
+};
+
 // get and format date range
 // getRange(-1,1) => yesterday, tomorrow
 // date may not be in sync, depending on time-zone
@@ -13,7 +18,7 @@ const formatDate = (d: Date) => d.toISOString().split("T")[0];
 // if today is 2000-01-02:
 // -1 -> 2000-01-01, 1 -> 2000-01-03
 export const valueToDate = (givenValue: number) => {
-  const today = new Date();
+  const today = new Date(); // todo -> add helper to set timezone to local
   const getDate = new Date(today.getTime());
   getDate.setDate(today.getDate() + givenValue);
   return formatDate(getDate);
@@ -34,7 +39,7 @@ export const getNextWeek = () => {
 
   return {
     Sunday: nextSunday,
-    Monday: weekString(1),
+    DayNames: weekString(1),
     Tuesday: weekString(2),
     Wednesday: weekString(3),
     Thursday: weekString(4),
@@ -68,3 +73,8 @@ const getNextSunday = (date = new Date()) => {
 
 export const getDayWeekLater = (day: string) =>
   valueToDate(dateToValue(day) + 7);
+
+export const getDateRange = (start: string, end: string | null): DateRange => ({
+  Start: start,
+  End: end,
+});

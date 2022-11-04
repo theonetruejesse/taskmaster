@@ -9,7 +9,7 @@ export interface CloneState {
   PageId: string;
   DayNames: DateRange;
   GenesisId: string | null;
-  // Repeat: string
+  // Repeat: Repeat (enum)
 }
 
 export const getUpdatedCloneState = (page: PageObjectResponse): CloneState => {
@@ -32,14 +32,15 @@ export const getUpdatedCloneState = (page: PageObjectResponse): CloneState => {
     genesisId =
       props.Genesis.relation.length == 1 ? props.Genesis.relation[0].id : null;
   }
+  if (!genesisId) throw "no genesis id given";
 
-  let start: string = "";
+  let start: string | undefined = undefined;
   if (props.Start.type == "select") {
-    if (!props.Start.select) throw "no starting day selected";
-    start = props.Start.select!.name;
+    start = props.Start.select?.name;
   }
+  if (!start) throw "no starting day selected";
 
-  let end: string | undefined = "";
+  let end: string | undefined = undefined;
   if (props.End.type == "select") {
     end = props.End.select?.name;
   }

@@ -1,3 +1,3 @@
-export const IS_GENERATED = {
-  checkbox: true,
-};
+export const getGeneratedProp = (state: boolean) => ({
+  checkbox: state,
+});
