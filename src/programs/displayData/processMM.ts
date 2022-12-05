@@ -24,6 +24,8 @@ export interface MastermindChunk {
 
 // break state down into chunks (data objects) based on dates
 const breakdown = (mmState: MastermindState): Array<MastermindChunk> => {
+  if (!mmState.Date.Start) throw "no start given";
+
   const chunks: MastermindChunk[] = [];
   if (!mmState.Time || !mmState.Data) return chunks;
 
@@ -59,17 +61,18 @@ const breakdown = (mmState: MastermindState): Array<MastermindChunk> => {
   return chunks;
 };
 
+// {Sunday: [], Monday: [], ... /Saturday: []}
+const startingState = Object.keys(DayNames).reduce((days: any, d: any) => {
+  const addDay: any = {};
+  if (isNaN(d)) addDay[d] = [];
+  return { ...days, ...addDay };
+}, {});
+
 export const processData = async () => {
   const ikDateRanges: string[] = [];
+  let totalDataPoints = 0;
   let dataMap: any = {};
   const response = await getAllMM();
-
-  // {Sunday: [], Monday: [], ... /Saturday: []}
-  const startingState = Object.keys(DayNames).reduce((days: any, d: any) => {
-    const addDay: any = {};
-    if (isNaN(d)) addDay[d] = [];
-    return { ...days, ...addDay };
-  }, {});
 
   for (const page of response.results) {
     if (isFullPage(page)) {
@@ -85,10 +88,12 @@ export const processData = async () => {
         const dayOfWeek = getDayOfWeek(c.Day);
         dataMap[dateKey][dayOfWeek].push(c);
       });
+      totalDataPoints += stateChunks.length;
     }
   }
   ikDateRanges.sort();
   return {
+    TotalDataPoints: totalDataPoints,
     IteratorKeys: {
       dateRanges: ikDateRanges,
       dayNames: Object.keys(DayNames).filter((k: any) => isNaN(k)), // ["Sunday", "Monday", ... , "Saturday"]

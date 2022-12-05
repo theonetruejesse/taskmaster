@@ -1,7 +1,7 @@
 import { getEnumKeyByValue } from "./enum";
 
 export interface DateRange {
-  Start: string;
+  Start: string | null;
   End: string | null;
 }
 
@@ -62,6 +62,7 @@ export const getNextWeek = () => {
 };
 
 export const getNewDays = (weekDays: any, dayNames: DateRange): DateRange => {
+  if (!dayNames.Start) throw "no start given";
   const start = weekDays[dayNames.Start];
   if (!start) throw "Starting date issue";
 
@@ -93,6 +94,7 @@ export const getDateRange = (start: string, end: string | null): DateRange => ({
 });
 
 export const createDateList = (dateRange: DateRange): string[] => {
+  if (!dateRange.Start) throw "no start given";
   if (!dateRange.End) return [dateRange.Start];
   const dateList = [];
   let datePointer = dateRange.Start;

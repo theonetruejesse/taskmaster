@@ -7,3 +7,6 @@ export const notion = new Client({
 });
 
 export const week = getNextWeek();
+
+// good testing place
+console.log(week);

@@ -1,9 +1,10 @@
 import { PageObjectResponse } from "@notionhq/client/build/src/api-endpoints";
+import { week } from "../constants";
 import { Roi, getRoiValue } from "../properties/Roi";
 import { Status } from "../properties/Status";
 import { Type } from "../properties/Type";
-import { DateRange, getDateRange } from "../utils/dates";
-
+import { DateRange, getDateRange, getNewDays } from "../utils/dates";
+import { CloneState } from "./cloneState";
 export interface MastermindState {
   Name: string;
   Date: DateRange;
@@ -93,6 +94,30 @@ export const getMasterMindState = (
           }
         : null,
     Generated: isGenerated,
+    OtherProps: props,
+  };
+};
+
+// for clone program
+export const genesisToMMState = (
+  genesis: PageObjectResponse,
+  cloneState: CloneState
+): MastermindState => {
+  const props = genesis.properties;
+
+  let title = "";
+  if (props.Name.type == "title" && props.Name.title) {
+    title = props.Name.title[0]["plain_text"];
+  }
+  if (!title) throw "title error";
+
+  return {
+    Name: `${cloneState.Streak} - ${title}`,
+    Date: getNewDays(week, cloneState.DayNames),
+    Generated: true,
+    Status: Status.Soon,
+    Data: null,
+    Time: null,
     OtherProps: props,
   };
 };

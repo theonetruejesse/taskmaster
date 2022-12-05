@@ -14,12 +14,12 @@ async function main() {
     })
   );
 
-  app.get("/clone", async (req, res) => {
+  app.get("/clone", async (_, res) => {
     console.log("\n", week);
     res.send(await cloneMM());
   });
 
-  app.get("/data", async (req, res) => {
+  app.get("/data", async (_, res) => {
     res.send(await processData());
   });
 
